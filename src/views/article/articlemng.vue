@@ -115,7 +115,6 @@
 </template>
 
 <script>
-// import Bus from "../../assets/Bus.js"
 import api from "@/api/article.js";
 export default {
   data() {
@@ -147,18 +146,13 @@ export default {
       //条件查询单独封装的对象
       searchEntity: "",
 
-      mobileStatus: false, //是否是移动端
-      sidebarStatus: true, //侧边栏状态，true：打开，false：关闭
-      sidebarFlag: " openSidebar " //侧边栏标志
     };
   },
   created() {
     this.search(this.pageConf.pageCode, this.pageConf.pageSize);
   },
   methods: {
-    // sendMsg(id) {
-    //   Bus.$emit('article',id);
-    // },
+
     _notify(message, type) {
       this.$message({
         message: message,
@@ -171,19 +165,7 @@ export default {
     },
     //条件查询
     search(pageCode, pageSize) {
-      // this.$http
-      //   .post(api.article.findByPage(pageSize, pageCode), this.searchEntity)
-      //   .then(result => {
-      //     this.article = result.body.data.rows;
-      //     this.pageConf.totalPage = result.body.data.total;
-      //   });
-      // this.axios.get("http://localhost:8899/article/getByPage",{
-      //   params: {
-      //     start: this.pageConf.pageCode,
-      //     size: this.pageConf.pageSize,
-      //     titles: this.searchEntity,
-      //   }
-      // })
+
       api
         .getByPage(
           this.pageConf.pageCode,
@@ -251,49 +233,6 @@ export default {
     handleAdd() {
       window.location.href = "/#/admin/articlepub";
     },
-
-    //导出
-    handleExcel() {},
-
-    /**
-     * 监听窗口改变UI样式（区别PC和Phone）
-     */
-    changeDiv() {
-      let isMobile = this.isMobile();
-      if (isMobile) {
-        //手机访问
-        this.sidebarFlag = " hideSidebar mobile ";
-        this.sidebarStatus = false;
-        this.mobileStatus = true;
-      } else {
-        this.sidebarFlag = " openSidebar";
-        this.sidebarStatus = true;
-        this.mobileStatus = false;
-      }
-    },
-    isMobile() {
-      let rect = body.getBoundingClientRect();
-      return rect.width - RATIO < WIDTH;
-    },
-    handleSidebar() {
-      if (this.sidebarStatus) {
-        this.sidebarFlag = " hideSidebar ";
-        this.sidebarStatus = false;
-      } else {
-        this.sidebarFlag = " openSidebar ";
-        this.sidebarStatus = true;
-      }
-      let isMobile = this.isMobile();
-      if (isMobile) {
-        this.sidebarFlag += " mobile ";
-        this.mobileStatus = true;
-      }
-    },
-    //蒙版
-    drawerClick() {
-      this.sidebarStatus = false;
-      this.sidebarFlag = " hideSidebar mobile ";
-    }
   }
 };
 </script>

@@ -90,7 +90,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'Articlemng',
         component: () => import('@/views/article/articlemng'),
-        meta: { title: '文章管理', icon: 'form' }
+        meta: { title: '文章管理', icon: 'example' }
       }
     ]
   },
@@ -103,7 +103,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'Category',
         component: () => import('@/views/category/category'),
-        meta: { title: '菜单管理', icon: 'form' }
+        meta: { title: '菜单管理', icon: 'nested' }
       }
     ]
   },
@@ -116,7 +116,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'Links',
         component: () => import('@/views/link/links'),
-        meta: { title: '友链管理', icon: 'form' }
+        meta: { title: '友链管理', icon: 'link' }
       }
     ]
   },
@@ -129,7 +129,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'User',
         component: () => import('@/views/user/user'),
-        meta: { title: '用户管理', icon: 'form' }
+        meta: { title: '用户管理', icon: 'user' }
       }
     ]
   },
@@ -150,7 +150,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'Setting',
         component: () => import('@/views/setting/setting'),
-        meta: { title: '全局设置', icon: 'form',roles: ['admin'], }
+        meta: { title: '全局设置', icon: 'table',roles: ['admin'], }
       }
     ]
   },
@@ -163,7 +163,7 @@ export const asyncRoutes = [
         path: 'index',
         name: 'Authority',
         component: () => import('@/views/authority/authority'),
-        meta: { title: '权限管理', icon: 'form',roles: ['admin'], }
+        meta: { title: '权限管理', icon: 'eye-open',roles: ['admin'], }
       }
     ]
   },

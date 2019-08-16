@@ -1,10 +1,5 @@
 <template>
   <div class="dashboard-container">
-    <div class="dashboard-text">name: {{ name }}</div>
-    <div class="dashboard-text">
-      roles:
-      <span v-for="role in roles" :key="role">{{ role }}</span>
-    </div>
     <blockquote>仪表盘</blockquote>
     <div id="cards">
       <el-row :gutter="40">
@@ -114,34 +109,19 @@
           <h3>博客信息</h3>
           <el-card>
             <b>作者：</b>
-            <a href="https://github.com/TyCoding/" target="_blank" style="color: #3222d4;">TyCoding</a>
+            <a href="https://github.com/niu6364" target="_blank" style="color: #3222d4;">GuXue</a>
             <br />
-            <b>简介：</b>Tumo Blog 一个轻量型博客系统。
+            <b>简介：</b>GolBlog 一个轻量型博客系统。
             <br />
             <b>项目地址：</b>
             <a
-              href="https://github.com/TyCoding/tumo/"
+              href="https://github.com/niu6364/vue-goblog-manager"
               target="_blank"
               style="color: #3222d4;"
-            >https://github.com/TyCoding/tumo</a>
+            >https://github.com/niu6364/vue-goblog-manager</a>
             <br />
             <br />
-            <b>开源作品</b>
-            <br />
-            <span>权限管理系统：</span>
-            <a
-              href="https://github.com/TyCoding/permission/"
-              target="_blank"
-              style="color: #3222d4;"
-            >https://github.com/TyCoding/permission/</a>
-            <br />
-            <span>Spring Learn：</span>
-            <a
-              href="https://github.com/TyCoding/spring-learn"
-              target="_blank"
-              style="color: #3222d4;"
-            >https://github.com/TyCoding/spring-learn</a>
-            <br />
+          
           </el-card>
         </el-col>
       </el-row>
@@ -192,95 +172,33 @@ export default {
      */
     init() {
       //文章数量
-      // this.axios.get("http://localhost:8899/article/getAllCount").then(response => {
-      //     this.article_count = response.data.data;
-      //   });
       api.getArticleCount().then(response => {
         this.article_count = response.data;
         console.log(this.article_count);
       });
       // //评论数量
-      // this.axios
-      //   .get("http://localhost:8899/comment/getAllCount")
-      //   .then(response => {
-      //     console.log(response.data.data);
-      //     this.comments_count = response.data.data;
-      //   });
       api.getCommentCount().then(response => {
         console.log(response.data);
-        this.comments_count = response.data.data;
+        this.comments_count = response.data;
       });
       // //标签数量
-      // this.axios.get("http://localhost:8899/tag/getAllCount").then(response => {
-      //   this.tags_count = response.data.data;
-      // });
       api.getTagCount().then(response => {
         this.tags_count = response.data;
       });
       // //友链数量
-      // this.axios
-      //   .get("http://localhost:8899/link/getAllCount")
-      //   .then(response => {
-      //     this.links_count = response.data.data;
-      //   });
       api.getLinkCount().then(response => {
         this.links_count = response.data;
       });
       // //最新文章
-      // this.axios.get("http://localhost:8899/article/getAll").then(response => {
-      //   this.article = response.data.data;
-      // });
       api.getArticles().then(response => {
         this.article = response.data;
       });
       // //最新评论
-      // this.axios.get("http://localhost:8899/comment/getAll").then(response => {
-      //   this.comments = response.data.data;
-      // });
       api.getComments().then(response => {
         this.comments = response.data;
       });
     },
 
-    /**
-     * 监听窗口改变UI样式（区别PC和Phone）
-     */
-    changeDiv() {
-      let isMobile = this.isMobile();
-      if (isMobile) {
-        //手机访问
-        this.sidebarFlag = " hideSidebar mobile ";
-        this.sidebarStatus = false;
-        this.mobileStatus = true;
-      } else {
-        this.sidebarFlag = " openSidebar";
-        this.sidebarStatus = true;
-        this.mobileStatus = false;
-      }
-    },
-    isMobile() {
-      let rect = body.getBoundingClientRect();
-      return rect.width - RATIO < WIDTH;
-    },
-    handleSidebar() {
-      if (this.sidebarStatus) {
-        this.sidebarFlag = " hideSidebar ";
-        this.sidebarStatus = false;
-      } else {
-        this.sidebarFlag = " openSidebar ";
-        this.sidebarStatus = true;
-      }
-      let isMobile = this.isMobile();
-      if (isMobile) {
-        this.sidebarFlag += " mobile ";
-        this.mobileStatus = true;
-      }
-    },
-    //蒙版
-    drawerClick() {
-      this.sidebarStatus = false;
-      this.sidebarFlag = " hideSidebar mobile ";
-    }
   }
 };
 </script>

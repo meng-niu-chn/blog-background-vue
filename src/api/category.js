@@ -34,6 +34,14 @@ export default {
         })
     },
 
+    deleteTags: (data) => {
+        return request({
+            url: tagUri + '/delete',
+            method: 'post',
+            data
+        })
+    },
+
     getCategoryById: (id) => {
         return request({
             url: categoryUri + '/getById',

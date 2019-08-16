@@ -49,7 +49,7 @@
                 </el-form-item>
               </el-tooltip>
             </el-col>
-            <el-col :xs="24" :sm="12" :lg="6" :span="12" style="padding-top:10px;">
+            <el-col :xs="24" :sm="12" :lg="8" :span="8" style="padding-top:10px;">
               <div>
                 <el-form-item>
                   <el-tag
@@ -73,12 +73,28 @@
                 </el-form-item>
               </div>
             </el-col>
+            <el-col :xs="24" :sm="12" :lg="8" :span="8" style="padding-top:10px;">
+              <div>
+                <el-form-item>
+                  <el-upload
+                    class="upload-demo"
+                    action="http://localhost:8899/user/uploadAvatar"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess"
+                    :before-upload="beforeAvatarUpload"
+                  >
+                    <el-input v-model="article.cover" placeholder="url">
+                      <template slot="prepend">
+                        <el-button size="small" type="primary">点击上传</el-button>
+                      </template>
+                    </el-input>
+                  </el-upload>
+                </el-form-item>
+              </div>
+            </el-col>
           </el-row>
         </div>
         <div id="article">
-          <!-- <textarea id="article-editor-md" ref="articleEditorMd" name="article-editor-md"></textarea> -->
-          <!-- <mavon-editor v-model="article.contentMd" @change="autoSave" @imgAdd="$imgAdd" @imgDel="$imgDel"/> -->
-
           <mavonEditor
             v-model="article.contentMd"
             @change="autoSave"
@@ -87,6 +103,7 @@
             ref="mavon"
           ></mavonEditor>
         </div>
+        <p></p>
         <div style="float: right;margin-bottom: 15px;">
           <el-row :gutter="20">
             <el-col :xs="24" :sm="24" :lg="24" :span="12">
@@ -101,11 +118,9 @@
 </template>
 
 <script>
-// import Bus from "../../assets/Bus.js"
 import $route from "vue-router";
 import api from "@/api/article.js";
-// import {mavonEditor} from "mavon-editor";
-// import "mavon-editor/dist/css/index.css";
+
 import mavonEditor from "@/components/MarkdownEditor/index";
 export default {
   components: {
@@ -120,6 +135,7 @@ export default {
         title: "",
         titlePic: "",
         category: "",
+        cover: "",
         tags: "",
         author: "",
         type: "0",
@@ -143,31 +159,16 @@ export default {
           value: "",
           label: ""
         }
-      ],
-      mobileStatus: false, //是否是移动端
-      sidebarStatus: true, //侧边栏状态，true：打开，false：关闭
-      sidebarFlag: " openSidebar " //侧边栏标志
+      ]
     };
   },
   created() {
-    window.onload = function() {
-      app.changeDiv();
-    };
-    window.onresize = function() {
-      app.changeDiv();
-    };
     this.init();
   },
   methods: {
     imgAdd(pos, file) {
       var formdata = new FormData();
       formdata.append("file", file);
-      //  axios({
-      //      url: 'server url',
-      //      method: 'post',
-      //      data: formdata,
-      //      headers: { 'Content-Type': 'multipart/form-data' },
-      //  })
       api.picupload(formdata).then(response => {
         // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)
         // $vm.$img2Url 详情见本页末尾
@@ -185,20 +186,14 @@ export default {
       console.log(filename[0].split("/")[5]);
       var name = filename[0].split("/")[5];
       var formdata = new FormData();
-      formdata.append("filename", name); 
-      
+      formdata.append("filename", name);
+
       api.picdelete(formdata).then(response => {
         if (response.code == 200) {
-
         }
       });
     },
-    // getMsg(){
-    //   Bus.$on("id",function(msg) {
-    //     this.MMMMsg = msg;
-    //     console.log(this.MMMMsg);
-    //   })
-    // },
+
     autoSave(value, render) {
       console.log(render);
       this.article.contentMd = value;
@@ -210,24 +205,6 @@ export default {
           // this.article.content = window.markdownContent.getHTML(); //给content赋值
           this.article.tags = JSON.stringify(this.dynamicTags); //给tags字段赋值
           console.log(this.dynamicTags);
-          // this.$http
-          //   .post(api.publish.save, JSON.stringify(this.article))
-          //   .then(result => {
-          //     window.location.reload();
-          //     if (result.body.code == 200) {
-          //       this.$message({
-          //         showClose: true,
-          //         message: result.body.msg,
-          //         type: "success"
-          //       });
-          //     } else {
-          //       this.$message({
-          //         showClose: true,
-          //         message: result.body.msg,
-          //         type: "error"
-          //       });
-          //     }
-          //   });
           var url = "";
 
           if (this.article.id > 0) {
@@ -275,6 +252,32 @@ export default {
         }
       });
     },
+    _notify(message, type) {
+      this.$message({
+        message: message,
+        type: type
+      });
+    },
+    //文件上传前的前的钩子函数
+    beforeAvatarUpload(file) {
+      const isJPG = file.type === "image/jpeg";
+      const isGIF = file.type === "image/gif";
+      const isPNG = file.type === "image/png";
+      const isBMP = file.type === "image/bmp";
+      const isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isJPG && !isGIF && !isPNG && !isBMP) {
+        this.$message.error("上传图片必须是JPG/GIF/PNG/BMP 格式!");
+      }
+      return (isJPG || isBMP || isGIF || isPNG) && isLt2M;
+    },
+    //文件上传成功的钩子函数
+    handleAvatarSuccess(res, file, fileList) {
+      this._notify("图片上传成功", "success");
+      if (res.code == 200) {
+        this.article.cover = res.data.url;
+      }
+    },
     //点击发布文章
     publishBtn(form, state) {
       this.article.state = state; //0:存入草稿；1:发布
@@ -301,28 +304,15 @@ export default {
     },
 
     init() {
-      //分类数据
-      // this.$http.get(api.publish.allCategory).then(result => {
-      //   this.options = [];
-      //   result.body.data.forEach(row => {
-      //     if (row.name != null) {
-      //       this.options.push({ value: row.name.toString(), label: row.name });
-      //     }
-      //   });
-      // });
       if (this.$route.params.id > 0) {
         console.log(this.$route.params.id);
-        // this.axios
-        //   .get("http://localhost:8899/article/getById", {
-        //     params: {
-        //       id: this.$route.params.id
-        //     }
-        //   })
+
         api.getById(this.$route.params.id).then(response => {
           if (response.code == 200) {
             var a = response.data;
             this.article.id = a.id;
             this.article.title = a.title;
+            this.article.cover = a.cover;
             this.article.category = a.category;
             this.article.author = a.author;
             this.article.type = String(a.type);
@@ -349,45 +339,6 @@ export default {
           }
         });
       });
-    },
-    /**
-     * 监听窗口改变UI样式（区别PC和Phone）
-     */
-    changeDiv() {
-      let isMobile = this.isMobile();
-      if (isMobile) {
-        //手机访问
-        this.sidebarFlag = " hideSidebar mobile ";
-        this.sidebarStatus = false;
-        this.mobileStatus = true;
-      } else {
-        this.sidebarFlag = " openSidebar";
-        this.sidebarStatus = true;
-        this.mobileStatus = false;
-      }
-    },
-    isMobile() {
-      let rect = body.getBoundingClientRect();
-      return rect.width - RATIO < WIDTH;
-    },
-    handleSidebar() {
-      if (this.sidebarStatus) {
-        this.sidebarFlag = " hideSidebar ";
-        this.sidebarStatus = false;
-      } else {
-        this.sidebarFlag = " openSidebar ";
-        this.sidebarStatus = true;
-      }
-      let isMobile = this.isMobile();
-      if (isMobile) {
-        this.sidebarFlag += " mobile ";
-        this.mobileStatus = true;
-      }
-    },
-    //蒙版
-    drawerClick() {
-      this.sidebarStatus = false;
-      this.sidebarFlag = " hideSidebar mobile ";
     }
   }
 };

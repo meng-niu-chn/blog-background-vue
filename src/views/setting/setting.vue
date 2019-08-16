@@ -205,33 +205,18 @@ export default {
       //localUpload: api.user.localUpload,
       avatarDialog: false,
       avatarList: [],
-      mobileStatus: false, //是否是移动端
-      sidebarStatus: true, //侧边栏状态，true：打开，false：关闭
-      sidebarFlag: " openSidebar " //侧边栏标志
+
     };
   },
   created() {
-    window.onload = function() {
-      app.changeDiv();
-    };
-    window.onresize = function() {
-      app.changeDiv();
-    };
     this.init();
   },
   methods: {
     imgAdd(pos, file) {
       var formdata = new FormData();
       formdata.append("file", file);
-      //  axios({
-      //      url: 'server url',
-      //      method: 'post',
-      //      data: formdata,
-      //      headers: { 'Content-Type': 'multipart/form-data' },
-      //  })
       api.picupload(formdata).then(response => {
         // 第二步.将返回的url替换到文本原位置![...](0) -> ![...](url)
-        // $vm.$img2Url 详情见本页末尾
         if (response.code == 200) {
           var url = response.data.url;
 
@@ -265,17 +250,8 @@ export default {
       });
     },
     init() {
-      // this.$http.get(api.user.getSetting).then(response => {
-      //   this.setting = response.body.data;
-      //   this.setting.siteDonation = eval("(" + this.setting.siteDonation + ")");
-      //   this.setting.siteLinks = eval("(" + this.setting.siteLinks + ")");
-      // });
-      // this.axios.get("http://localhost:8899/user/getSetting/")
       api.getSetting().then(response => {
         this.setting = response.data;
-
-        // this.setting.siteDonation = eval("(" + this.setting.siteDonation + ")");
-        // this.setting.siteLinks = eval("(" + this.setting.siteLinks + ")");
         this.setting.siteLinks = JSON.parse(this.setting.siteLinks);
         this.setting.siteDonation = JSON.parse(this.setting.siteDonation);
         console.log(this.setting);
@@ -298,22 +274,9 @@ export default {
               obj[i].value = this.donation.value;
             }
           }
-          // this.setting.about = window.markdownContent.getHTML(); //给content赋值
-          // this.setting.aboutMd = window.markdownContent.getMarkdown(); //给contentMd赋值
           this.setting.siteDonation = JSON.stringify(this.setting.siteDonation);
           this.setting.siteLinks = JSON.stringify(this.setting.siteLinks);
           console.log(this.setting);
-          // this.$http
-          //   .post(api.user.updateSetting, JSON.stringify(this.setting))
-          //   .then(response => {
-          //     if (response.body.code == 200) {
-          //       this._notify(response.body.msg, "success");
-          //     } else {
-          //       this._notify(response.body.msg, "error");
-          //     }
-          //     window.location.reload();
-          //   });
-          // this.axios.post("http://localhost:8899/user/updateSetting",this.setting)
           api.updateSetting(this.setting).then(response => {
             if (response.code == 200) {
               this._notify(response.msg, "success");
@@ -338,16 +301,6 @@ export default {
         id: this.setting.id,
         siteDonation: JSON.stringify(this.setting.siteDonation)
       };
-      // this.$http
-      //   .post(api.user.updateSetting, JSON.stringify(data))
-      //   .then(response => {
-      //     this.init();
-      //     if (response.body.code == 200) {
-      //       this._notify(response.body.msg, "success");
-      //     } else {
-      //       this._notify(response.body.msg, "error");
-      //     }
-      //   });
       api.updateSetting(data).then(response => {
         this.init();
         if (response.code == 200) {
@@ -369,8 +322,6 @@ export default {
       this._notify("图片上传成功", "success");
       if (res.code == 200) {
         this.donation.value = res.data.url;
-        //this.changeDon();
-        //this.avatarDialog = false;
       }
     },
     //文件上传前的前的钩子函数
@@ -389,46 +340,6 @@ export default {
       }
       return (isJPG || isBMP || isGIF || isPNG) && isLt2M;
     },
-
-    /**
-     * 监听窗口改变UI样式（区别PC和Phone）
-     */
-    changeDiv() {
-      let isMobile = this.isMobile();
-      if (isMobile) {
-        //手机访问
-        this.sidebarFlag = " hideSidebar mobile ";
-        this.sidebarStatus = false;
-        this.mobileStatus = true;
-      } else {
-        this.sidebarFlag = " openSidebar";
-        this.sidebarStatus = true;
-        this.mobileStatus = false;
-      }
-    },
-    isMobile() {
-      let rect = body.getBoundingClientRect();
-      return rect.width - RATIO < WIDTH;
-    },
-    handleSidebar() {
-      if (this.sidebarStatus) {
-        this.sidebarFlag = " hideSidebar ";
-        this.sidebarStatus = false;
-      } else {
-        this.sidebarFlag = " openSidebar ";
-        this.sidebarStatus = true;
-      }
-      let isMobile = this.isMobile();
-      if (isMobile) {
-        this.sidebarFlag += " mobile ";
-        this.mobileStatus = true;
-      }
-    },
-    //蒙版
-    drawerClick() {
-      this.sidebarStatus = false;
-      this.sidebarFlag = " hideSidebar mobile ";
-    }
   }
 };
 </script>

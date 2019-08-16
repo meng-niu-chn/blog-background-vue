@@ -146,18 +146,9 @@ export default {
       avatarDialog: false,
       avatarList: [],
       defaultActive: "9",
-      mobileStatus: false, //是否是移动端
-      sidebarStatus: true, //侧边栏状态，true：打开，false：关闭
-      sidebarFlag: " openSidebar " //侧边栏标志
     };
   },
   created() {
-    window.onload = function() {
-      app.changeDiv();
-    };
-    window.onresize = function() {
-      app.changeDiv();
-    };
     this.getUserInfo();
   },
   methods: {
@@ -169,11 +160,6 @@ export default {
     },
     //获取当前用户信息
     getUserInfo() {
-      // this.$http.get(api.user.info).then(result => {
-      //   this.user = result.body.data;
-      //   this.pass.id = result.body.data.id;
-      // });
-      // this.axios.get("http://localhost:8899/user/getCurrent")
       api.getCurrent().then(response => {
         // this.user = response.data;
         this.user.id = response.data.id;
@@ -188,24 +174,10 @@ export default {
     },
 
     save() {
-      // this.$http
-      //   .post(api.user.update, JSON.stringify(this.user))
-      //   .then(result => {
-      //     if (result.body.code == 200) {
-      //       this._notify(result.body.msg, "success");
-      //       window.location.href = api.common.logout;
-      //     } else {
-      //       this._notify(result.body.msg, "error");
-      //     }
-      //   });
-      // this.axios.post("http://localhost:8899/user/update",this.user)
       api.update(this.user).then(response => {
         if (response.code == 200) {
           this._notify(response.msg, "success");
-          //window.location.href = "api.common.logout";
-          //  this.$store.dispatch("user/logout");
-          //  this.$router.push(`/login?redirect=${this.$route.fullPath}`);
-          //this.getUserInfo();
+
           window.location.reload();
         } else {
           this._notify(response.msg, "error");
@@ -231,15 +203,7 @@ export default {
         id: this.user.id,
         avatar: this.user.avatar
       };
-      // this.$http.post(api.user.update, JSON.stringify(data)).then(response => {
-      //   this.avatarDialog = false;
-      //   if (response.body.code == 200) {
-      //     this._notify("更换头像成功", "success");
-      //     window.location.href = api.common.logout;
-      //   } else {
-      //     this._notify(response.body.msg, "error");
-      //   }
-      // });
+
       api.update(data).then(response => {
         this.avatarDialog = false;
         if (response.code == 200) {
@@ -257,19 +221,7 @@ export default {
       } else if (this.pass.password != this.pass.repassword) {
         this._notify("两次输入的密码不一致", "warning");
       } else {
-        // this.$http
-        //   .post(api.user.update, JSON.stringify(this.pass))
-        //   .then(result => {
-        //     if (result.body.code == 200) {
-        //       this._notify(result.body.msg, "success");
-        //       //执行/logout请求
-        //       window.location.href = "/admin/logout"; //更改了密码，注销当前登录状态，重新登录
-        //     } else {
-        //       this._notify(result.body.msg, "error");
-        //     }
-        //     this.clearPass();
-        //   });
-        // this.axios.post("http://localhost:8899/user/update",this.pass)
+
         api.update(this.pass).then(response => {
           if (response.code == 200) {
             this._notify(response.msg, "success");
@@ -324,46 +276,6 @@ export default {
       }
       return (isJPG || isBMP || isGIF || isPNG) && isLt2M;
     },
-
-    /**
-     * 监听窗口改变UI样式（区别PC和Phone）
-     */
-    changeDiv() {
-      let isMobile = this.isMobile();
-      if (isMobile) {
-        //手机访问
-        this.sidebarFlag = " hideSidebar mobile ";
-        this.sidebarStatus = false;
-        this.mobileStatus = true;
-      } else {
-        this.sidebarFlag = " openSidebar";
-        this.sidebarStatus = true;
-        this.mobileStatus = false;
-      }
-    },
-    isMobile() {
-      let rect = body.getBoundingClientRect();
-      return rect.width - RATIO < WIDTH;
-    },
-    handleSidebar() {
-      if (this.sidebarStatus) {
-        this.sidebarFlag = " hideSidebar ";
-        this.sidebarStatus = false;
-      } else {
-        this.sidebarFlag = " openSidebar ";
-        this.sidebarStatus = true;
-      }
-      let isMobile = this.isMobile();
-      if (isMobile) {
-        this.sidebarFlag += " mobile ";
-        this.mobileStatus = true;
-      }
-    },
-    //蒙版
-    drawerClick() {
-      this.sidebarStatus = false;
-      this.sidebarFlag = " hideSidebar mobile ";
-    }
   }
 };
 </script>

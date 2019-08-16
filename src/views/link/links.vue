@@ -136,9 +136,6 @@ export default {
       },
       defaultActive: "8",
       editDialog: false,
-      mobileStatus: false, //是否是移动端
-      sidebarStatus: true, //侧边栏状态，true：打开，false：关闭
-      sidebarFlag: " openSidebar " //侧边栏标志
     };
   },
   created() {
@@ -157,10 +154,6 @@ export default {
         type: type
       });
     },
-    //关闭侧边栏
-    handleClose(key, keyPath) {
-      this.editDialog = false;
-    },
 
     //刷新列表
     reloadList() {
@@ -168,17 +161,6 @@ export default {
     },
     //条件查询
     search(pageCode, pageSize) {
-      //   this.$http.post(api.links.findByPage(pageSize, pageCode)).then(result => {
-      //     this.links = result.body.data.rows;
-      //     this.pageConf.totalPage = result.body.data.total;
-      //   });
-      // this.axios
-      //   .get("http://localhost:8899/link/getByPage", {
-      //     params: {
-      //       start: pageCode,
-      //       size: pageSize
-      //     }
-      //   })
       api.getByPage(pageCode, pageSize).then(response => {
         this.links = response.data.records;
         this.pageConf.totalPage = response.data.total;
@@ -203,25 +185,6 @@ export default {
         center: true
       })
         .then(() => {
-          //   this.$http
-          //     .post(api.links.delete, JSON.stringify(ids))
-          //     .then(result => {
-          //       if (result.body.code == 200) {
-          //         this._notify(result.body.msg, "success");
-          //         if (
-          //           (this.pageConf.totalPage - 1) / this.pageConf.pageSize ===
-          //           this.pageConf.pageCode - 1
-          //         ) {
-          //           this.pageConf.pageCode = this.pageConf.pageCode - 1;
-          //         }
-          //         this.reloadList();
-          //       } else {
-          //         this._notify(result.body.msg, "error");
-          //         this.reloadList();
-          //       }
-          //     });
-          // this.axios
-          //   .post("http://localhost:8899/link/delete", ids)
           api.delete(ids).then(response => {
             if (response.code == 200) {
               this._notify(response.msg, "success");
@@ -262,20 +225,6 @@ export default {
         this._notify("输入的信息不能为空", "warning");
         return;
       } else {
-        // this.$http
-        //   .post(api.links.save, JSON.stringify(this.editor))
-        //   .then(result => {
-        //     this.reloadList();
-        //     if (result.body.code == 200) {
-        //       this.editor.links = {};
-        //       this._notify(result.body.msg, "success");
-        //     } else {
-        //       this._notify(result.body.msg, "error");
-        //     }
-        //   });
-
-        // this.axios
-        //   .post("http://localhost:8899/link/save", this.saver)
         api.save(this.saver).then(response => {
           this.reloadList();
           if (response.code == 200) {
@@ -294,15 +243,6 @@ export default {
       this.editDialog = true;
       this.editor = {}; //清空表单
       //查询当前id对应的数据
-      //   this.$http.get(api.links.findById(id)).then(result => {
-      //     this.editor = result.body.data;
-      //   });
-      // this.axios
-      //   .get("http://localhost:8899/link/getById", {
-      //     params: {
-      //       id: id
-      //     }
-      //   })
       api.getById(id).then(response => {
         this.editor = response.data;
       });
@@ -310,18 +250,6 @@ export default {
     edit() {
       this.editDialog = false;
       //查询当前id对应的数据
-      //   this.$http
-      //     .put(api.links.update, JSON.stringify(this.editor))
-      //     .then(result => {
-      //       this.reloadList();
-      //       if (result.body.code == 200) {
-      //         this._notify(result.body.msg, "success");
-      //       } else {
-      //         this._notify(result.body.msg, "error");
-      //       }
-      //     });
-      // this.axios
-      //   .post("http://localhost:8899/link/update", this.editor)
       api.update(this.editor).then(response => {
         this.reloadList();
         if (response.code == 200) {
@@ -332,45 +260,6 @@ export default {
       });
       this.editor = {};
     },
-    /**
-     * 监听窗口改变UI样式（区别PC和Phone）
-     */
-    changeDiv() {
-      let isMobile = this.isMobile();
-      if (isMobile) {
-        //手机访问
-        this.sidebarFlag = " hideSidebar mobile ";
-        this.sidebarStatus = false;
-        this.mobileStatus = true;
-      } else {
-        this.sidebarFlag = " openSidebar";
-        this.sidebarStatus = true;
-        this.mobileStatus = false;
-      }
-    },
-    isMobile() {
-      let rect = body.getBoundingClientRect();
-      return rect.width - RATIO < WIDTH;
-    },
-    handleSidebar() {
-      if (this.sidebarStatus) {
-        this.sidebarFlag = " hideSidebar ";
-        this.sidebarStatus = false;
-      } else {
-        this.sidebarFlag = " openSidebar ";
-        this.sidebarStatus = true;
-      }
-      let isMobile = this.isMobile();
-      if (isMobile) {
-        this.sidebarFlag += " mobile ";
-        this.mobileStatus = true;
-      }
-    },
-    //蒙版
-    drawerClick() {
-      this.sidebarStatus = false;
-      this.sidebarFlag = " hideSidebar mobile ";
-    }
   }
 };
 </script>

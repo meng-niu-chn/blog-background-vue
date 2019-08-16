@@ -201,20 +201,10 @@ export default {
       dialogVisible: false,
       dialogFlag: "",
       dialogType: true, //dialog分类：true：新增，false：修改
-      defaultActive: "5",
-
-      mobileStatus: false, //是否是移动端
-      sidebarStatus: true, //侧边栏状态，true：打开，false：关闭
-      sidebarFlag: " openSidebar " //侧边栏标志
+      defaultActive: "5"
     };
   },
   created() {
-    window.onload = function() {
-      app.changeDiv();
-    };
-    window.onresize = function() {
-      app.changeDiv();
-    };
     this.search("category", this.pageConf.pageCode, this.pageConf.pageSize);
     this.search("tags", this.pageConf.t_pageCode, this.pageConf.t_pageSize);
   },
@@ -240,13 +230,7 @@ export default {
     //条件查询
     search(flag, pageCode, pageSize) {
       if (flag == "category") {
-        // this.axios
-        //   .get("http://localhost:8899/category/getByPage", {
-        //     params: {
-        //       start: pageCode,
-        //       size: pageSize
-        //     }
-        //   })
+
         api.getCategorysByPage(pageCode, pageSize).then(response => {
           this.entity.category = response.data.records;
           this.pageConf.totalPage = response.data.total;
@@ -254,13 +238,7 @@ export default {
       }
 
       if (flag == "tags") {
-        // this.axios
-        //   .get("http://localhost:8899/tag/getByPage", {
-        //     params: {
-        //       start: pageCode,
-        //       size: pageSize
-        //     }
-        //   })
+
         api.getTagsByPage(pageCode, pageSize).then(response => {
           this.entity.tags = response.data.records;
           this.pageConf.t_totalPage = response.data.total;
@@ -287,7 +265,7 @@ export default {
 
     //删除
     sureDelete(flag, ids) {
-      this.$confirm("你确定永久删除此用户信息？", "提示", {
+      this.$confirm("你确定永久删除此信息？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
@@ -303,6 +281,7 @@ export default {
                 ) {
                   this.pageConf.pageCode = this.pageConf.pageCode - 1;
                 }
+                this._notify(response.msg, "success");
                 this.reloadList(flag);
               } else {
                 this._notify(response.msg, "error");
@@ -310,6 +289,7 @@ export default {
               }
             });
           } else if (flag == "tags") {
+            console.log("deleteTagsinddffffffgggggg")
             api.deleteTags(ids).then(response => {
               if (response.code == 200) {
                 if (
@@ -318,6 +298,7 @@ export default {
                 ) {
                   this.pageConf.t_pageCode = this.pageConf.t_pageCode - 1;
                 }
+                this._notify(response.msg, "success");
                 this.reloadList(flag);
               } else {
                 this._notify(response.data.msg, "error");
@@ -330,27 +311,6 @@ export default {
           this._notify("已取消删除", "info");
         });
     },
-    /////////////////////////////////////////////
-    // var url =
-    //   flag == "category"
-    //     ? "http://localhost:8899/category/delete"
-    //     : "http://localhost:8899/tag/delete";
-    // this.axios.post(url, ids).then(response => {
-    //   console.log(response.data);
-    //   if (response.data.code == 200) {
-    //     this._notify(response.data.msg, "success");
-    //     if (flag == "category") {
-
-    //     }
-    //     if (flag == "tags") {
-
-    //     }
-    //     this.reloadList(flag);
-    //   } else {
-    //     this._notify(response.data.msg, "error");
-    //     this.reloadList(flag);
-    //   }
-    // });
 
     //删除按钮
     handleDelete(flag, id) {
@@ -373,14 +333,6 @@ export default {
     //更新按钮
     handleEdit(flag, id) {
       this.dialogVisible = true;
-      var url =
-        flag == "category"
-          ? "http://localhost:8899/category/getById"
-          : "http://localhost:8899/tag/getById";
-      //查询当前id对应的数据
-      // this.$http.get(api.category.findById(flag, id)).then(result => {
-      //   this.editor = result.body.data;
-      // });
 
       if (flag == "category") {
         api.getCategoryById(id).then(response => {
@@ -393,14 +345,6 @@ export default {
           this.editor = response.data;
         });
       }
-
-      // this.axios
-      //   .get(url, {
-      //     params: {
-      //       id: id
-      //     }
-      //   })
-      //   .then(response => {});
 
       this.dialogType = false; //更新
       if (flag == "category") {
@@ -452,15 +396,6 @@ export default {
             this.reloadList(flag);
           });
         }
-        // console.log("请求API：" + url + ", 数据：" + this.editor.name);
-        // this.$http.post(url, JSON.stringify(this.editor)).then(result => {
-        //   if (result.body.code == 200) {
-        //     this._notify(result.body.msg, "success");
-        //   } else {
-        //     this._notify(result.body.msg, "error");
-        //   }
-        //   this.reloadList(url.substring(1, url.lastIndexOf("/")));
-        // });
       } else {
         //更新
         if (this.dialogFlag == "分类") {
@@ -492,63 +427,7 @@ export default {
             this.reloadList(flag);
           });
         }
-        // console.log("请求API：" + url + ", 数据：" + this.editor.name);
-        // this.$http.put(url, JSON.stringify(this.editor)).then(result => {
-        //   if (result.body.code == 200) {
-        //     this._notify(result.body.msg, "success");
-        //   } else {
-        //     this._notify(result.body.msg, "error");
-        //   }
-        //   this.reloadList(url.substring(1, url.lastIndexOf("/")));
-        // });
-        // this.axios.post(url, this.editor).then(response => {
-        //   if (response.data.code == 200) {
-        //     this._notify(response.data.msg, "success");
-        //   } else {
-        //     this._notify(response.data.msg, "error");
-        //   }
-        //   this.reloadList(flag);
-        // });
       }
-    },
-    /**
-     * 监听窗口改变UI样式（区别PC和Phone）
-     */
-    changeDiv() {
-      let isMobile = this.isMobile();
-      if (isMobile) {
-        //手机访问
-        this.sidebarFlag = " hideSidebar mobile ";
-        this.sidebarStatus = false;
-        this.mobileStatus = true;
-      } else {
-        this.sidebarFlag = " openSidebar";
-        this.sidebarStatus = true;
-        this.mobileStatus = false;
-      }
-    },
-    isMobile() {
-      let rect = body.getBoundingClientRect();
-      return rect.width - RATIO < WIDTH;
-    },
-    handleSidebar() {
-      if (this.sidebarStatus) {
-        this.sidebarFlag = " hideSidebar ";
-        this.sidebarStatus = false;
-      } else {
-        this.sidebarFlag = " openSidebar ";
-        this.sidebarStatus = true;
-      }
-      let isMobile = this.isMobile();
-      if (isMobile) {
-        this.sidebarFlag += " mobile ";
-        this.mobileStatus = true;
-      }
-    },
-    //蒙版
-    drawerClick() {
-      this.sidebarStatus = false;
-      this.sidebarFlag = " hideSidebar mobile ";
     }
   }
 };
